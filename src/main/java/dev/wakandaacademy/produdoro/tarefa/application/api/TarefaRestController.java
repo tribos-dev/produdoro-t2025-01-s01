@@ -3,6 +3,7 @@ package dev.wakandaacademy.produdoro.tarefa.application.api;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.wakandaacademy.produdoro.config.security.service.TokenService;
@@ -33,6 +34,13 @@ public class TarefaRestController implements TarefaAPI {
 		Tarefa tarefa = tarefaService.detalhaTarefa(usuario,idTarefa);
 		log.info("[finaliza] TarefaRestController - detalhaTarefa");
 		return new TarefaDetalhadoResponse(tarefa);
+	}
+
+	@Override
+	public void concluiTarefa(String token, UUID idUsuario) {
+		log.info("[inicia] TarefaRestController - concluiTarefa");
+		System.out.println(getUsuarioByToken(token));
+		log.info("[finaliza] TarefaRestController - concluiTarefa");
 	}
 
 	private String getUsuarioByToken(String token) {
