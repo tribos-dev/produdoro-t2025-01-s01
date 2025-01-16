@@ -37,10 +37,10 @@ public class TarefaRestController implements TarefaAPI {
 	}
 
 	@Override
-	public void concluiTarefa(String token, UUID idUsuario) {
+	public void concluiTarefa(String token, UUID idTarefa) {
 		log.info("[inicia] TarefaRestController - concluiTarefa");
-
-
+		var usuarioEmail = getUsuarioByToken(token);
+		tarefaService.concluirTarefa(idTarefa, usuarioEmail);
 		log.info("[finaliza] TarefaRestController - concluiTarefa");
 	}
 

@@ -43,13 +43,6 @@ public class UsuarioApplicationService implements UsuarioService {
 		return new UsuarioCriadoResponse(usuario);
 	}
 
-	@Override
-	public UsuarioCriadoResponse buscaUsuarioPorEmail(String emailUsuario) {
-		log.info("[inicia] UsuarioApplicationService - buscaUsuarioPorEmail");
-		var usuario = usuarioRepository.buscaUsuarioPorEmail(emailUsuario);
-		log.info("[finaliza] UsuarioApplicationService - buscaUsuarioPorEmail");
-		return new UsuarioCriadoResponse(usuario);
-	}
 
 
 }
