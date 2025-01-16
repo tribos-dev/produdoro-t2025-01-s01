@@ -3,6 +3,9 @@ package dev.wakandaacademy.produdoro.tarefa.application.api;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+
+@Getter
 public class EditaTarefaRequest {
 	
 	@NotBlank
