@@ -39,7 +39,8 @@ public class TarefaRestController implements TarefaAPI {
 	@Override
 	public void concluiTarefa(String token, UUID idUsuario) {
 		log.info("[inicia] TarefaRestController - concluiTarefa");
-		System.out.println(getUsuarioByToken(token));
+
+
 		log.info("[finaliza] TarefaRestController - concluiTarefa");
 	}
 
