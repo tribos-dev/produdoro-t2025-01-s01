@@ -60,7 +60,7 @@ public class Usuario {
 		}
 	}
 
-	private void validaPausaLonga() {
+	public void validaPausaLonga() {
 		if (this.status.equals(StatusUsuario.PAUSA_LONGA)) {
 			throw APIException.build(HttpStatus.CONFLICT, "Usuário já está em Pausa Longa");
 		}
