@@ -43,7 +43,7 @@ public class TarefaApplicationService implements TarefaService {
         log.info("[finaliza] TarefaApplicationService - detalhaTarefa");
         return tarefa;
     }
-	@Override
+	@Override 
 	public void editaTarefa(String emailUsuario, UUID idTarefa, @Valid EditaTarefaRequest editaTarefaRequest) {
 		log.info("[inicia] TarefaApplicationService - editaTarefa");
 		Tarefa tarefa = detalhaTarefa(emailUsuario, idTarefa);
