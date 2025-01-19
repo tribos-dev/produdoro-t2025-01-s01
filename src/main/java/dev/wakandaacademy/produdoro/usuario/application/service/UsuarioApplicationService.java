@@ -1,11 +1,14 @@
 package dev.wakandaacademy.produdoro.usuario.application.service;
 
-import javax.validation.Valid;
+import javax.validation.Valid;import javax.validation.constraints.Email;
 
 import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import dev.wakandaacademy.produdoro.credencial.application.service.CredencialService;
+import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.pomodoro.application.service.PomodoroService;
 import dev.wakandaacademy.produdoro.usuario.application.api.UsuarioCriadoResponse;
 import dev.wakandaacademy.produdoro.usuario.application.api.UsuarioNovoRequest;
@@ -46,9 +49,16 @@ public class UsuarioApplicationService implements UsuarioService {
 
 	@Override
 	public void pausaCurta(String usuarioToken, UUID idUsuario) {
-		// TODO Auto-generated method stub
+		log.info("[inicia] UsuarioApplicationService - pausaCurta");
+		Usuario usuario = usuarioRepository.buscaUsuarioPorId(idUsuario);
+		if (!usuario.getIdUsuario().equals(idUsuario)) {
+		throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário não encontrado"); }
+		usuario.pausaCurtaStatus();
+		usuarioRepository.salva(usuario);
+		log.info("[finaliza] UsuarioApplicationService - pausaCurta");
+		}
 		
 	}
 
 
-}
+
