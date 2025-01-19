@@ -5,6 +5,8 @@ import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import dev.wakandaacademy.produdoro.tarefa.application.api.EditaTarefaRequest;
+
 import java.util.UUID;
 
 @RestController
@@ -17,4 +19,9 @@ public interface UsuarioAPI {
 	@GetMapping(value = "/{idUsuario}")
 	@ResponseStatus(code = HttpStatus.OK)
 	UsuarioCriadoResponse buscaUsuarioPorId(@PathVariable UUID idUsuario);
+	
+	
+	@PatchMapping ("/pausa-curta/{idUsuario}")
+	void pausaCurta (@RequestHeader(name = "Authorization",required = true) String token, 
+			@PathVariable UUID idUsuario);
 }
