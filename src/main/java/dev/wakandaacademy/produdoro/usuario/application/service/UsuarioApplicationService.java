@@ -44,4 +44,11 @@ public class UsuarioApplicationService implements UsuarioService {
 	}
 
 
+	@Override
+	public void pausaCurta(String usuarioToken, UUID idUsuario) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 }
