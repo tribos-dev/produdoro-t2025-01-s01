@@ -3,10 +3,11 @@ package dev.wakandaacademy.produdoro.usuario.application.api;
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.token.TokenService;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.wakandaacademy.produdoro.config.security.service.TokenService;
 import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.usuario.application.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,9 @@ import java.util.UUID;
 public class UsuarioController implements UsuarioAPI {
 	
 	private final UsuarioService usuarioAppplicationService;
-private final dev.wakandaacademy.produdoro.config.security.service.TokenService tokenService;
+	private final TokenService tokenService;
+
+
 	@Override
 	public UsuarioCriadoResponse postNovoUsuario(@Valid UsuarioNovoRequest usuarioNovo) {
 		log.info("[inicia] UsuarioController - postNovoUsuario");
@@ -37,18 +40,5 @@ private final dev.wakandaacademy.produdoro.config.security.service.TokenService 
 		log.info("[finaliza] UsuarioController - buscaUsuarioPorId");
 		return buscaUsuario;
 	}
-	@Override
-	public void mudaStatusPausaCurta(String token, UUID idUsuario) {
-
-		log.info("[inicia] UsuarioController - mudaStatusPausaCurta");
-		log.info("[idUsuario] {}", idUsuario);
-		String usuarioToken = tokenService.getUsuarioByBearerToken(token).orElseThrow(() -> APIException.
-				build(HttpStatus.BAD_REQUEST, "Não foi possivel validar token"));
-		usuarioAppplicationService.pausaCurta(usuarioToken, idUsuario);
-		log.info("[finaliza] UsuarioController - mudaStatusPausaCurta");
-		
-		
-	}
-	
 	
 }

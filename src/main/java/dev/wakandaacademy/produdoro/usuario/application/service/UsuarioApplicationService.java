@@ -45,20 +45,9 @@ public class UsuarioApplicationService implements UsuarioService {
 		log.info("[finaliza] UsuarioApplicationService - buscaUsuarioPorId");
 		return new UsuarioCriadoResponse(usuario);
 	}
-
-
-	@Override
-	public void pausaCurta(String usuarioToken, UUID idUsuario) {
-		log.info("[inicia] UsuarioApplicationService - pausaCurta");
-		Usuario usuario = usuarioRepository.buscaUsuarioPorId(idUsuario);
-		if (!usuario.getIdUsuario().equals(idUsuario)) {
-		throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário não encontrado"); }
-		usuario.pausaCurtaStatus();
-		usuarioRepository.salva(usuario);
-		log.info("[finaliza] UsuarioApplicationService - pausaCurta");
-		}
+}
 		
-	}
+	
 
 
 
