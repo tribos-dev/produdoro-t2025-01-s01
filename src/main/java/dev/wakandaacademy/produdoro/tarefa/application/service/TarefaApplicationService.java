@@ -58,12 +58,14 @@ public class TarefaApplicationService implements TarefaService {
 
 
     }
-
     private void handlerVerification(Tarefa tarefa, Usuario usuario){
         if(!tarefa.getIdUsuario().equals(usuario.getIdUsuario()))
             throw APIException.build(HttpStatus.UNAUTHORIZED, "Tarefa não pertence a esse usuario");
 
         if(tarefa.getStatus().equals(StatusTarefa.CONCLUIDA))
             throw APIException.build(HttpStatus.BAD_REQUEST, "Tarefa já está concluída");
+
     }
+
+
 }
