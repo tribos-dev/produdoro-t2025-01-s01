@@ -56,7 +56,7 @@ public class Tarefa {
 		}
 	}
 
-	public void concluiTarefa() {
+	public void concluiTarefa(){
 		this.status = StatusTarefa.CONCLUIDA;
 	}
 }
