@@ -60,7 +60,9 @@ public class TarefaApplicationService implements TarefaService {
 
         handleAmountTaskVerification(usuarioPorEmail);
 
-        tarefaRepository.limparTodasAsTarefas(idUsuario);
+        List<Tarefa> tarefasUsuario = tarefaRepository.listarTarefasPorIdusuario(idUsuario);
+
+        tarefaRepository.limparTodasAsTarefas(tarefasUsuario);
 
         log.info("[fim] TarefaApplicationService - limparTodasTarefas");
     }
