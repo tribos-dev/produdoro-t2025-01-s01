@@ -50,13 +50,11 @@ public class UsuarioApplicationService implements UsuarioService {
 	@Override
 	public void statusPausaCurta(String email, UUID idUsuario) {
 		log.info("[inicia] UsuarioApplicationService -statusPausaCurta");
-		Usuario usuarioId = usuarioRepository.buscaUsuarioPorId(idUsuario);
-		if (!usuarioId.getEmail().equals(email)) {
-			throw APIException.build(HttpStatus.BAD_REQUEST, 
-					"Usuário nãp autorisado");
-			}
-		usuarioId.pausaCurta();
-		usuarioRepository.salva(usuarioId);
+		Usuario usuario = usuarioRepository.buscaUsuarioPorEmail(email);
+		usuarioRepository.buscaUsuarioPorId(idUsuario);
+		usuario.validaUsuario(idUsuario);
+		usuario.pausaCurta();
+		usuarioRepository.salva(usuario);
 		log.info("[finaliza] UsuarioApplicationService - statusPausaCurta");
 		
 	}

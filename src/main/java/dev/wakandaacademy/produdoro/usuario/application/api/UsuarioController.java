@@ -43,7 +43,7 @@ public class UsuarioController implements UsuarioAPI {
 		log.info("[inicia] UsuarioController - mudaStatusPausaCurta");
 		log.info("[idUsuario] {}", idUsuario);
 		String usuario = tokenService.getUsuarioByBearerToken(token)
-				.orElseThrow(() -> APIException.build(HttpStatus.FORBIDDEN,"Token incorreto"));
+				.orElseThrow(() -> APIException.build(HttpStatus.UNAUTHORIZED,"Token incorreto"));
 		usuarioAppplicationService.statusPausaCurta(usuario, idUsuario);
 		log.info("[finaliza] UsuarioController - mudaStatusPausaCurta");
 	}
