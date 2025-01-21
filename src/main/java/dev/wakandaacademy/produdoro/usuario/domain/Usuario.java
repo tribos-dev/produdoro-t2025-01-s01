@@ -42,5 +42,4 @@ public class Usuario {
 		this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
 	}
 
-	public void pausaCurtaStatus()  {this.status = StatusUsuario.PAUSA_CURTA; }
 }
