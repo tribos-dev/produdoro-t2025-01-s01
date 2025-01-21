@@ -50,4 +50,6 @@ class TarefaApplicationServiceTest {
         TarefaRequest request = new TarefaRequest("tarefa 1", UUID.randomUUID(), null, null, 0);
         return request;
     }
+    
+    
 }

@@ -3,9 +3,12 @@ package dev.wakandaacademy.produdoro.usuario.application.service;
 import javax.validation.Valid;
 
 import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import dev.wakandaacademy.produdoro.credencial.application.service.CredencialService;
+import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.pomodoro.application.service.PomodoroService;
 import dev.wakandaacademy.produdoro.usuario.application.api.UsuarioCriadoResponse;
 import dev.wakandaacademy.produdoro.usuario.application.api.UsuarioNovoRequest;
@@ -41,6 +44,21 @@ public class UsuarioApplicationService implements UsuarioService {
 		Usuario usuario = usuarioRepository.buscaUsuarioPorId(idUsuario);
 		log.info("[finaliza] UsuarioApplicationService - buscaUsuarioPorId");
 		return new UsuarioCriadoResponse(usuario);
+	}
+
+
+	@Override
+	public void statusPausaCurta(String email, UUID idUsuario) {
+		log.info("[inicia] UsuarioApplicationService -statusPausaCurta");
+		Usuario usuarioId = usuarioRepository.buscaUsuarioPorId(idUsuario);
+		if (!usuarioId.getEmail().equals(email)) {
+			throw APIException.build(HttpStatus.BAD_REQUEST, 
+					"Usuário nãp autorisado");
+			}
+		usuarioId.pausaCurta();
+		usuarioRepository.salva(usuarioId);
+		log.info("[finaliza] UsuarioApplicationService - statusPausaCurta");
+		
 	}
 
 
