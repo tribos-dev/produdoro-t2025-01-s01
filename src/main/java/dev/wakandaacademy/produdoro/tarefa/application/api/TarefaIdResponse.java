@@ -13,18 +13,4 @@ import java.util.stream.Collectors;
 public class TarefaIdResponse {
     private UUID idTarefa;
 
-    public static List<TarefaListResponse> converte(List<Tarefa> tarefas) {
-        return tarefas.stream()
-                .map(tarefa -> new TarefaListResponse(
-                        tarefa.getIdTarefa(),
-                        tarefa.getDescricao(),
-                        tarefa.getIdUsuario(),
-                        tarefa.getIdArea(),
-                        tarefa.getIdProjeto(),
-                        tarefa.getStatus(),
-                        tarefa.getStatusAtivacao(),
-                        tarefa.getContagemPomodoro()
-                ))
-                .collect(Collectors.toList());
-    }
 }

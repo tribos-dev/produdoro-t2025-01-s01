@@ -20,15 +20,6 @@ public interface TarefaAPI {
     TarefaDetalhadoResponse detalhaTarefa(@RequestHeader(name = "Authorization", required = true) String token,
                                           @PathVariable UUID idTarefa);
 
-    @GetMapping("/buscaTarefasDoUsuario/{idUsuario}")
-    List<TarefaListResponse> buscaTarefasPorUsuario(@RequestHeader(name = "Authorization", required = true)
-                                                    String token, @PathVariable UUID idUsuario);
-
-    @PatchMapping("/{idTarefa}/concluiTarefa")
-    @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    void concluiTarefa(@RequestHeader(name = "Authorization", required = true) String token,
-                       @PathVariable UUID idTarefa);
-
     @DeleteMapping("/usuario/{idUsuario}/deletaTarefasConcluidas")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     void deletaTarefasConcluidas(@RequestHeader(name = "Authorization", required = true) String token,
