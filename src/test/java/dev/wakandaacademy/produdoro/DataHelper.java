@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import dev.wakandaacademy.produdoro.pomodoro.domain.ConfiguracaoPadrao;
+import dev.wakandaacademy.produdoro.tarefa.application.api.EditaTarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.domain.StatusAtivacaoTarefa;
 import dev.wakandaacademy.produdoro.tarefa.domain.StatusTarefa;
@@ -55,4 +56,9 @@ public class DataHelper {
 
         );
     }
+
+	public static EditaTarefaRequest creatEditaTarefa() {
+		EditaTarefaRequest editaTarefaRequest = new EditaTarefaRequest("tarefa2");
+		return editaTarefaRequest;
+	}
 }

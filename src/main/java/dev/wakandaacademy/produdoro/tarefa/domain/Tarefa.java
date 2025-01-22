@@ -2,6 +2,10 @@ package dev.wakandaacademy.produdoro.tarefa.domain;
 
 import java.util.UUID;
 
+import dev.wakandaacademy.produdoro.handler.APIException;
+import dev.wakandaacademy.produdoro.tarefa.application.api.EditaTarefaRequest;
+import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
+import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 import javax.validation.constraints.NotBlank;
 
 import lombok.*;
@@ -10,14 +14,13 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 
-import dev.wakandaacademy.produdoro.handler.APIException;
-import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
-import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.validation.Valid;
 
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -57,5 +60,9 @@ public class Tarefa {
 		}
 	}
 
+	public void edita(@Valid EditaTarefaRequest editaTarefaRequest) {
+		this.descricao = editaTarefaRequest.getDescricao();
+		
+	}
 
 }
