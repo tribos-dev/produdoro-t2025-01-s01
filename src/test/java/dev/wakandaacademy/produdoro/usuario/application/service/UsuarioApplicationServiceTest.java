@@ -51,9 +51,10 @@ class UsuarioApplicationServiceTest {
 		APIException ex = assertThrows(APIException.class, () -> usuarioApplicationService.mudaStatusPausaLonga(usuario.getEmail(), idUsuario));
 		assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusException());
 	}
+
 	@Test
 	void deveMudarStatusParaFoco(){
-		Usuario usuario = DataHelper.createUsuario();
+		Usuario usuario = DataHelper.createUsuario2();
 
 		when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
 		when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
@@ -88,6 +89,6 @@ class UsuarioApplicationServiceTest {
 				() -> usuarioApplicationService.mudaStatusParaFoco(usuario.getEmail(), usuario.getIdUsuario()));
 		assertEquals("Usuário já está em foco!", e.getMessage());
 		assertThrows(APIException.class, () -> usuarioApplicationService.mudaStatusParaFoco(usuario.getEmail(), usuario.getIdUsuario()));
-		assertEquals(HttpStatus.CONFLICT, e.getStatusException());
+		assertEquals(HttpStatus.BAD_REQUEST, e.getStatusException());
 	}
 }
