@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 
 import javax.validation.constraints.Email;
+import java.util.Optional;
 import java.util.UUID;
 
 @Builder
@@ -19,40 +20,61 @@ import java.util.UUID;
 @ToString
 @Document(collection = "Usuario")
 public class Usuario {
-    @Id
-    private UUID idUsuario;
-    @Email
-    @Indexed(unique = true)
-    private String email;
-    private ConfiguracaoUsuario configuracao;
-    @Builder.Default
-    private StatusUsuario status = StatusUsuario.FOCO;
-    @Builder.Default
-    private Integer quantidadePomodorosPausaCurta = 0;
+	@Id
+	private UUID idUsuario;
+	@Email
+	@Indexed(unique = true)
+	private String email;
+	private ConfiguracaoUsuario configuracao;
+	@Builder.Default
+	private StatusUsuario status = StatusUsuario.FOCO;
+	@Builder.Default
+	private Integer quantidadePomodorosPausaCurta = 0;
 
-    public Usuario(UsuarioNovoRequest usuarioNovo, ConfiguracaoPadrao configuracaoPadrao) {
-        this.idUsuario = UUID.randomUUID();
-        this.email = usuarioNovo.getEmail();
-        this.status = StatusUsuario.FOCO;
-        this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
-    }
+	public Usuario(UsuarioNovoRequest usuarioNovo, ConfiguracaoPadrao configuracaoPadrao) {
+		this.idUsuario = UUID.randomUUID();
+		this.email = usuarioNovo.getEmail();
+		this.status = StatusUsuario.FOCO;
+		this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
+	}
 
-    public void mudaStatusPausaLonga(UUID idUsuario) {
-        pertenceUsuario(idUsuario);
-        validaPausaLonga();
-        mudaStatusPausaLonga();
-    }
+	public void mudaStatusPausaLonga(UUID idUsuario) {
+		pertenceUsuario(idUsuario);
+		validaPausaLonga();
+		mudaStatusPausaLonga();
+	}
 
-    private void mudaStatusPausaLonga() {
-        this.status = StatusUsuario.PAUSA_LONGA;
-    }
+	private void mudaStatusPausaLonga() {
+		this.status = StatusUsuario.PAUSA_LONGA;
+	}
 
-    private void pertenceUsuario(UUID idUsuario) {
-        if (!this.idUsuario.equals(idUsuario)) {
-            throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário não encontrado");
-        }
-    }
+	private void pertenceUsuario(UUID idUsuario) {
+		if (!this.idUsuario.equals(idUsuario)) {
+			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário não encontrado");
+		}
+	}
 
+	public void mudaStatusParaFoco(UUID idUsuario) {
+		validaUsurio(idUsuario);
+		verificaStatusFoco();
+	}
+
+	private void validaUsurio(UUID idUsuario) {
+		Optional.of(this.idUsuario)
+				.filter(id -> id.equals(idUsuario))
+				.orElseThrow(() -> APIException.build(HttpStatus.UNAUTHORIZED, "Usuário(a) não autorizado(a) para a requisição solicitada"));
+	}
+
+	private void verificaStatusFoco() {
+		if (this.status.equals(StatusUsuario.FOCO)) {
+			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário já está em foco!");
+		}
+		mudaStatusParaFoco();
+	}
+
+	private void mudaStatusParaFoco() {
+		this.status = StatusUsuario.FOCO;
+	}
     public void validaPausaLonga() {
         if (this.status.equals(StatusUsuario.PAUSA_LONGA)) {
             throw APIException.build(HttpStatus.CONFLICT, "Usuário já está em Pausa Longa");
