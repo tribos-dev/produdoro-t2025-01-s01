@@ -8,6 +8,7 @@ import dev.wakandaacademy.produdoro.usuario.application.api.UsuarioNovoRequest;
 public interface UsuarioService {
 	UsuarioCriadoResponse criaNovoUsuario(UsuarioNovoRequest usuarioNovo);
     UsuarioCriadoResponse buscaUsuarioPorId(UUID idUsuario);
+	void mudaStatusPausaLonga(String email, UUID idUsuario);
 
 
 }

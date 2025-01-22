@@ -31,4 +31,10 @@ public interface TarefaAPI {
     void editaTarefa (@RequestHeader(name = "Authorization",required = true) String token, @PathVariable UUID idTarefa,
     		@RequestBody @Valid EditaTarefaRequest editaTarefaRequest);
 
+
+    @PatchMapping(value = "/conclui-tarefa/{idTarefa}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void concluiTarefa(@RequestHeader(name = "Authorization", required = true) String token,
+                                    @PathVariable UUID idTarefa);
+    
 }
