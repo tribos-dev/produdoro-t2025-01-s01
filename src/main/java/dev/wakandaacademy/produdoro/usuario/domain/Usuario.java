@@ -1,5 +1,6 @@
 package dev.wakandaacademy.produdoro.usuario.domain;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.constraints.Email;
@@ -64,5 +65,29 @@ public class Usuario {
 		if (this.status.equals(StatusUsuario.PAUSA_LONGA)) {
 			throw APIException.build(HttpStatus.CONFLICT, "Usuário já está em Pausa Longa");
 		}
+	}
+
+	public void mudaStatusParaFoco(UUID idUsuario) {
+		validaUsurio(idUsuario);
+		verificaStatusFoco();
+	}
+
+	private void validaUsurio(UUID idUsuario) {
+		Optional.of(this.idUsuario)
+				.filter(id -> id.equals(idUsuario))
+				.orElseThrow(() -> APIException.build(HttpStatus.UNAUTHORIZED, "Usuário(a) não autorizado(a) para a requisição solicitada"));
+
+
+	}
+
+	private void verificaStatusFoco() {
+		if (this.status.equals(StatusUsuario.FOCO)) {
+			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário já está em foco!");
+		}
+		mudaStatusParaFoco();
+	}
+
+	private void mudaStatusParaFoco() {
+		this.status = StatusUsuario.FOCO;
 	}
 }

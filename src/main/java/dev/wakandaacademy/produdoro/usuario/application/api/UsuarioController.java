@@ -48,7 +48,21 @@ public class UsuarioController implements UsuarioAPI {
 		usuarioAppplicationService.mudaStatusPausaLonga(email, idUsuario);
 		log.info("[finaliza] UsuarioController - mudaStatusPausaLonga");		
 	}
-	
+
+	@Override
+	public void mudaStatusParaFoco(String token, UUID idUsuario) {
+		log.info("[inicia] UsuarioController - mudaStatusFoco");
+		String usuario = validaUsuarioToken(token);
+		usuarioAppplicationService.mudaStatusParaFoco(usuario, idUsuario);
+		log.info("[finaliza] UsuarioController - mudaStatusFoco");
+	}
+
+	private String validaUsuarioToken(String token) {
+		return tokenService.getUsuarioByBearerToken(token)
+				.orElseThrow(() -> APIException.build(HttpStatus.UNAUTHORIZED,"Credenciais invalidas") );
+	}
+
+
 	private String getUsuarioToken(String token) {
 		log.debug("[token] {}", token);
 		String usuario = tokenService.getUsuarioByBearerToken(token).
