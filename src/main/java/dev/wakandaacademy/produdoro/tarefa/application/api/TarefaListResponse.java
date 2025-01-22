@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -36,5 +37,12 @@ public class TarefaListResponse {
 
     public static List<TarefaListResponse> converter(List<Tarefa> tarefas){
         return tarefas.stream().map(TarefaListResponse::new).collect(Collectors.toList());
+    }
+
+    public static List<TarefaListResponse> converte(List<Tarefa> tarefas) {
+        return tarefas.stream()
+                .sorted(Comparator.comparingInt(Tarefa::getPosicaoTarefa))
+                .map(TarefaListResponse::new)
+                .collect(Collectors.toList());
     }
 }

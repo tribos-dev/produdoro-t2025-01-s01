@@ -27,7 +27,8 @@ public class TarefaApplicationService implements TarefaService {
     @Override
     public TarefaIdResponse criaNovaTarefa(TarefaRequest tarefaRequest) {
         log.info("[inicia] TarefaApplicationService - criaNovaTarefa");
-        Tarefa tarefaCriada = tarefaRepository.salva(new Tarefa(tarefaRequest));
+        int quantidadeDeTarefas = tarefaRepository.contaNumeroDeTarefasDoUsuario(tarefaRequest.getIdUsuario());
+        Tarefa tarefaCriada = tarefaRepository.salva(new Tarefa(tarefaRequest, quantidadeDeTarefas));
         log.info("[finaliza] TarefaApplicationService - criaNovaTarefa");
         return TarefaIdResponse.builder().idTarefa(tarefaCriada.getIdTarefa()).build();
     }
@@ -45,6 +46,28 @@ public class TarefaApplicationService implements TarefaService {
 
     @Override
     public List<TarefaListResponse> buscarTodasAsTarefas(String usuario, UUID idUsuario) {
-        return null;
+        log.info("[inicia] TarefaApplicationService - buscaTodasTarefas");
+        Usuario usuarioPorEmail = usuarioRepository.buscaUsuarioPorEmail(usuario);
+        usuarioRepository.buscaUsuarioPorId(idUsuario);
+        usuarioPorEmail.validaUsuario(idUsuario);
+        List<Tarefa> tarefas = tarefaRepository.buscaTarefasDoUsuario(idUsuario);
+        log.info("[finaliza] TarefaApplicationService - buscaTodasTarefas");
+        return TarefaListResponse.converte(tarefas);
     }
+
+    @Override
+    public void ativaTarefa(String email, UUID idTarefa) {
+        log.info("[inicia] TarefaApplicationService - ativaTarefa");
+        Tarefa tarefa = tarefaRepository.buscaTarefaPorId(idTarefa)
+                .orElseThrow(()-> APIException.build(HttpStatus.NOT_FOUND, "ID da tarefa inválido"));
+        Usuario usuario = usuarioRepository.buscaUsuarioPorEmail(email);
+        tarefa.pertenceAoUsuario(usuario);
+        tarefa.verificaTarefaAtiva();
+        tarefaRepository.ativaTarefa(usuario.getIdUsuario());
+        tarefa.ativaTarefa();
+        tarefaRepository.salva(tarefa);
+        log.info("[finaliza] TarefaApplicationService - ativaTarefa");
+    }
+
+
 }
