@@ -7,6 +7,7 @@ import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.repository.TarefaRepository;
 import dev.wakandaacademy.produdoro.tarefa.domain.StatusTarefa;
 import dev.wakandaacademy.produdoro.tarefa.domain.Tarefa;
+import dev.wakandaacademy.produdoro.tarefa.infra.TarefaInfraRepository;
 import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -29,7 +32,8 @@ public class TarefaApplicationService implements TarefaService {
     @Override
     public TarefaIdResponse criaNovaTarefa(TarefaRequest tarefaRequest) {
         log.info("[inicia] TarefaApplicationService - criaNovaTarefa");
-        Tarefa tarefaCriada = tarefaRepository.salva(new Tarefa(tarefaRequest));
+        int posicao = retornaProximaPosicaoDisponivel(tarefaRequest.getIdUsuario());
+        Tarefa tarefaCriada = tarefaRepository.salva(new Tarefa(tarefaRequest, posicao));
         log.info("[finaliza] TarefaApplicationService - criaNovaTarefa");
         return TarefaIdResponse.builder().idTarefa(tarefaCriada.getIdTarefa()).build();
     }
@@ -80,5 +84,14 @@ public class TarefaApplicationService implements TarefaService {
 
     }
 
+
+    private int retornaProximaPosicaoDisponivel(UUID idUsuario) {
+        List<Tarefa> listaTarefa = tarefaRepository.buscaTodasTarefasPorIdUsuario(idUsuario);
+
+        Tarefa tarefaMaiorPosicao = listaTarefa.stream().max(Comparator.comparingInt(
+                Tarefa::getPosicao)).orElse(null);
+
+        return tarefaMaiorPosicao == null ? 0 : tarefaMaiorPosicao.getPosicao();
+    }
 
 }
