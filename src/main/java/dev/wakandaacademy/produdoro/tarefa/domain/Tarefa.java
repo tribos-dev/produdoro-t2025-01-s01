@@ -28,6 +28,8 @@ import javax.validation.Valid;
 @Getter
 @Setter
 @Document(collection = "Tarefa")
+@ToString
+@EqualsAndHashCode
 public class Tarefa {
 	@Id
 	private UUID idTarefa;
