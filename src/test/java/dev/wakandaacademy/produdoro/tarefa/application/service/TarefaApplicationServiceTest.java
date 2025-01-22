@@ -1,17 +1,16 @@
 package dev.wakandaacademy.produdoro.tarefa.application.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import dev.wakandaacademy.produdoro.DataHelper;
+import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.domain.StatusTarefa;
 import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
@@ -79,6 +78,39 @@ class TarefaApplicationServiceTest {
         tarefaApplicationService.concluirTarefa(tarefa.getIdTarefa(), usuario.getEmail());
         assertEquals(tarefa.getStatus(), StatusTarefa.CONCLUIDA);
 
+    }
+
+    @Test
+    public void testNaoMudaOrdemDeUmaTarefa() {
+        Usuario usuario = DataHelper.createUsuario();
+        List<Tarefa> tarefas = DataHelper.createListTarefaToChangePosition();
+        int posicao = 0;
+
+        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
+        when(tarefaRepository.buscaTarefaPorId(any()))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(tarefas.get(1)));
+
+        when(tarefaRepository.buscaTodasTarefasPorIdUsuario(any()))
+                .thenReturn(tarefas);
+
+        assertThrows(APIException.class, () -> tarefaApplicationService.alteraPosicaoTarefa(
+                usuario.getEmail(), tarefas.get(1).getIdTarefa(), posicao));
+        tarefas.get(1).setPosicao(posicao);
+
+        tarefaApplicationService.alteraPosicaoTarefa(usuario.getEmail(),
+                tarefas.get(1).getIdTarefa(), posicao);
+
+        assertEquals(posicao, tarefas.get(1).getPosicao());
+    }
+
+
+
+
+    @Test
+    public void deveMudarOrdemDeUmaTarefa() {
+        Usuario usuario = DataHelper.createUsuario();
+        List<Tarefa> tarefas = DataHelper.createListTarefa();
     }
 
     public TarefaRequest getTarefaRequest() {

@@ -61,6 +61,15 @@ public class DataHelper {
         );
     }
 
+    public static List<Tarefa> createListTarefaToChangePosition() {
+        return List.of(Tarefa.builder().idTarefa(UUID.randomUUID()).descricao("tarefa 1").idUsuario(usuario1).build(),
+                Tarefa.builder().idTarefa(UUID.randomUUID()).descricao("tarefa 2").idUsuario(usuario1).build(),
+                Tarefa.builder().idTarefa(UUID.randomUUID()).descricao("tarefa 3").idUsuario(usuario1).build(),
+                Tarefa.builder().idTarefa(UUID.randomUUID()).descricao("tarefa 4").idUsuario(usuario1).build()
+
+        );
+    }
+
 
 	public static EditaTarefaRequest creatEditaTarefa() {
 		EditaTarefaRequest editaTarefaRequest = new EditaTarefaRequest("tarefa2");
