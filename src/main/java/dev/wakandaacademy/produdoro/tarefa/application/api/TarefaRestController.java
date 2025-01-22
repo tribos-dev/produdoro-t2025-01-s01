@@ -43,6 +43,13 @@ public class TarefaRestController implements TarefaAPI {
 		var usuarioEmail = getUsuarioByToken(token);
 		tarefaService.concluirTarefa(idTarefa, usuarioEmail);
 		log.info("[finaliza] TarefaRestController - concluiTarefa");
+	public void limparTodasTarefas(String token, UUID idUsuario) {
+		log.info("[inicia] TarefaRestController - limparTodaTarefas");
+
+		var emailUsuario = getUsuarioByToken(token);
+		tarefaService.limparTodasTarefas(idUsuario, emailUsuario);
+
+		log.info("[fim] TarefaRestController - limparTodaTarefas");
 	}
 
 	private String getUsuarioByToken(String token) {

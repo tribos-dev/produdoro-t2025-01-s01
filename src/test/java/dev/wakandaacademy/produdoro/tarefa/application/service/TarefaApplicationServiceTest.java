@@ -1,11 +1,13 @@
 package dev.wakandaacademy.produdoro.tarefa.application.service;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 import java.util.Optional;
@@ -41,6 +43,8 @@ class TarefaApplicationServiceTest {
     UsuarioRepository usuarioRepository;
 
 
+    @Mock
+    UsuarioRepository usuarioRepository;
     @Test
     void deveRetornarIdTarefaNovaCriada() {
         TarefaRequest request = getTarefaRequest();
@@ -72,6 +76,16 @@ class TarefaApplicationServiceTest {
     void deveConcluirTarefa(){
         Usuario usuario = DataHelper.createUsuario();
         Tarefa tarefa = DataHelper.createTarefa();
+    }
+    void deveDeletarTodasAsTarefasDoUsuario() {
+        Usuario usuario = DataHelper.createUsuario();
+        List<Tarefa> tarefas = DataHelper.createListTarefa();
+        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
+        when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
+        when(tarefaRepository.listarTarefasPorIdusuario(any())).thenReturn(tarefas);
+        tarefaApplicationService.limparTodasTarefas(usuario.getIdUsuario(), usuario.getEmail());
+        verify(tarefaRepository, times(1)).limparTodasAsTarefas(tarefas);
+    }
 
         when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
         when(tarefaRepository.buscaTarefaPorId(any())).thenReturn(Optional.of(tarefa));
