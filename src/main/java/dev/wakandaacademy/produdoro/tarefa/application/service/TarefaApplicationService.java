@@ -64,7 +64,7 @@ public class TarefaApplicationService implements TarefaService {
         Tarefa tarefa = tarefaRepository.buscaTarefaPorId(idTarefa)
                 .orElseThrow(() -> APIException.build(HttpStatus.NOT_FOUND, "Tarefa não encontrada"));
 
-        handlerVerification(tarefa, usuario);
+        handlerConcluirTarefaVerification(tarefa, usuario);
 
         tarefa.setStatus(StatusTarefa.CONCLUIDA);
         tarefaRepository.salva(tarefa);
@@ -72,7 +72,7 @@ public class TarefaApplicationService implements TarefaService {
 
 
     }
-    private void handlerVerification(Tarefa tarefa, Usuario usuario){
+    private void handlerConcluirTarefaVerification(Tarefa tarefa, Usuario usuario){
         if(!tarefa.getIdUsuario().equals(usuario.getIdUsuario()))
             throw APIException.build(HttpStatus.UNAUTHORIZED, "Tarefa não pertence a esse usuario");
 
@@ -88,14 +88,14 @@ public class TarefaApplicationService implements TarefaService {
         log.info("[inicia] TarefaApplicationService - limparTodasTarefas");
         Usuario usuarioPorEmail = usuarioRepository.buscaUsuarioPorEmail(emailUsuario);
         Usuario usuarioPorId = usuarioRepository.buscaUsuarioPorId(idUsuario);
-        handleVerification(usuarioPorId, usuarioPorEmail);
+        handleLimparTodasTarefasVerification(usuarioPorId, usuarioPorEmail);
         handleAmountTaskVerification(usuarioPorEmail);
         tarefaRepository.limparTodasAsTarefas(
                 tarefaRepository.listarTarefasPorIdusuario(idUsuario));
         log.info("[fim] TarefaApplicationService - limparTodasTarefas");
     }
 
-    private void handleVerification(Usuario usuarioPorId, Usuario usuarioPorEmail) {
+    private void handleLimparTodasTarefasVerification(Usuario usuarioPorId, Usuario usuarioPorEmail) {
 
         if(usuarioPorId == null)
             throw APIException.build(

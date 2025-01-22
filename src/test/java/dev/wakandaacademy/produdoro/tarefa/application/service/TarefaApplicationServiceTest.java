@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
 
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,9 +43,6 @@ class TarefaApplicationServiceTest {
     @Mock
     UsuarioRepository usuarioRepository;
 
-
-    @Mock
-    UsuarioRepository usuarioRepository;
     @Test
     void deveRetornarIdTarefaNovaCriada() {
         TarefaRequest request = getTarefaRequest();
@@ -71,12 +69,20 @@ class TarefaApplicationServiceTest {
     	 verify(tarefaRepository, times(1)).buscaTarefaPorId(tarefa.getIdTarefa());
     	 assertEquals("tarefa2", tarefa.getDescricao());
     }
-    
+
+
     @Test
     void deveConcluirTarefa(){
         Usuario usuario = DataHelper.createUsuario();
         Tarefa tarefa = DataHelper.createTarefa();
+        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
+        when(tarefaRepository.buscaTarefaPorId(any())).thenReturn(Optional.of(tarefa));
+        tarefaApplicationService.concluirTarefa(tarefa.getIdTarefa(), usuario.getEmail());
+        assertEquals(tarefa.getStatus(), StatusTarefa.CONCLUIDA);
+
     }
+
+    @Test
     void deveDeletarTodasAsTarefasDoUsuario() {
         Usuario usuario = DataHelper.createUsuario();
         List<Tarefa> tarefas = DataHelper.createListTarefa();
@@ -87,13 +93,6 @@ class TarefaApplicationServiceTest {
         verify(tarefaRepository, times(1)).limparTodasAsTarefas(tarefas);
     }
 
-        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
-        when(tarefaRepository.buscaTarefaPorId(any())).thenReturn(Optional.of(tarefa));
-
-        tarefaApplicationService.concluirTarefa(tarefa.getIdTarefa(), usuario.getEmail());
-        assertEquals(tarefa.getStatus(), StatusTarefa.CONCLUIDA);
-
-    }
 
     public TarefaRequest getTarefaRequest() {
         TarefaRequest request = new TarefaRequest("tarefa 1", UUID.randomUUID(), null, null, 0);
