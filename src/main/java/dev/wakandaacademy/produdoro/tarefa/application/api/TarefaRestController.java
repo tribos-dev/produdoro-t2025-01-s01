@@ -43,14 +43,18 @@ public class TarefaRestController implements TarefaAPI {
 		var usuarioEmail = getUsuarioByToken(token);
 		tarefaService.concluirTarefa(idTarefa, usuarioEmail);
 		log.info("[finaliza] TarefaRestController - concluiTarefa");
+
 	}
 
-	private String getUsuarioByToken(String token) {
-		log.debug("[token] {}", token);
-		String usuario = tokenService.getUsuarioByBearerToken(token).orElseThrow(() -> APIException.build(HttpStatus.UNAUTHORIZED, token));
-		log.info("[usuario] {}", usuario);
-		return usuario;
+	public void limparTodasTarefas(String token, UUID idUsuario) {
+		log.info("[inicia] TarefaRestController - limparTodaTarefas");
+
+		var emailUsuario = getUsuarioByToken(token);
+		tarefaService.limparTodasTarefas(idUsuario, emailUsuario);
+
+		log.info("[fim] TarefaRestController - limparTodaTarefas");
 	}
+
 
 	@Override
 	public void editaTarefa(String token, UUID idTarefa, @Valid EditaTarefaRequest editaTarefaRequest) {
@@ -61,4 +65,12 @@ public class TarefaRestController implements TarefaAPI {
 		
 	}
 
+	private String getUsuarioByToken(String token) {
+		log.debug("[token] {}", token);
+		String usuario = tokenService.getUsuarioByBearerToken(token).orElseThrow(
+				() -> APIException.build(HttpStatus.UNAUTHORIZED, token));
+		log.info("[usuario] {}", usuario);
+		return usuario;
+	}
 }
+
