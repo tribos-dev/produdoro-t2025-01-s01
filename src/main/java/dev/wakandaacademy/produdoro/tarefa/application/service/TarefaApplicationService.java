@@ -45,29 +45,28 @@ public class TarefaApplicationService implements TarefaService {
     @Override
     public void limparTodasTarefas(UUID idUsuario, String emailUsuario) {
         log.info("[inicia] TarefaApplicationService - limparTodasTarefas");
-
         Usuario usuarioPorEmail = usuarioRepository.buscaUsuarioPorEmail(emailUsuario);
-
         Usuario usuarioPorId = usuarioRepository.buscaUsuarioPorId(idUsuario);
+        handleVerification(usuarioPorId, usuarioPorEmail);
+        handleAmountTaskVerification(usuarioPorEmail);
+        tarefaRepository.limparTodasAsTarefas(
+                tarefaRepository.listarTarefasPorIdusuario(idUsuario));
+        log.info("[fim] TarefaApplicationService - limparTodasTarefas");
+    }
+
+    private void handleVerification(Usuario usuarioPorId, Usuario usuarioPorEmail) {
 
         if(usuarioPorId == null)
             throw APIException.build(
                     HttpStatus.NOT_FOUND, "Usuário não encontrado");
 
-        if(!usuarioPorEmail.getIdUsuario().equals(idUsuario))
+        if(!usuarioPorEmail.getIdUsuario().equals(usuarioPorId.getIdUsuario()))
             throw APIException.build(
                     HttpStatus.UNAUTHORIZED, "Usuário(a) não autorizado(a) para a requisição solicitada");
 
-        handleAmountTaskVerification(usuarioPorEmail);
-
-        List<Tarefa> tarefasUsuario = tarefaRepository.listarTarefasPorIdusuario(idUsuario);
-
-        tarefaRepository.limparTodasAsTarefas(tarefasUsuario);
-
-        log.info("[fim] TarefaApplicationService - limparTodasTarefas");
     }
 
-   private void handleAmountTaskVerification(Usuario usuario) {
+    private void handleAmountTaskVerification(Usuario usuario) {
         List<Tarefa> tarefas = tarefaRepository.listarTarefasPorIdusuario(usuario.getIdUsuario());
         if(tarefas.isEmpty())
             throw APIException.build(HttpStatus.CONFLICT, "Usuário não possui tarefa(as) cadastrada(as)");
