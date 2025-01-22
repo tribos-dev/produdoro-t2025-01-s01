@@ -4,6 +4,7 @@ import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaIdResponse;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.repository.TarefaRepository;
+import dev.wakandaacademy.produdoro.tarefa.domain.StatusTarefa;
 import dev.wakandaacademy.produdoro.tarefa.domain.Tarefa;
 import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
@@ -40,4 +41,31 @@ public class TarefaApplicationService implements TarefaService {
         log.info("[finaliza] TarefaApplicationService - detalhaTarefa");
         return tarefa;
     }
+
+    @Override
+    public void concluirTarefa(UUID idTarefa, String usuarioEmail) {
+        log.info("[inicia] TarefaApplicationService - concluirTarefa");
+
+        Usuario usuario = usuarioRepository.buscaUsuarioPorEmail(usuarioEmail);
+        Tarefa tarefa = tarefaRepository.buscaTarefaPorId(idTarefa)
+                .orElseThrow(() -> APIException.build(HttpStatus.NOT_FOUND, "Tarefa não encontrada"));
+
+        handlerVerification(tarefa, usuario);
+
+        tarefa.setStatus(StatusTarefa.CONCLUIDA);
+        tarefaRepository.salva(tarefa);
+        log.info("[finaliza] TarefaApplicationService - concluirTarefa");
+
+
+    }
+    private void handlerVerification(Tarefa tarefa, Usuario usuario){
+        if(!tarefa.getIdUsuario().equals(usuario.getIdUsuario()))
+            throw APIException.build(HttpStatus.UNAUTHORIZED, "Tarefa não pertence a esse usuario");
+
+        if(tarefa.getStatus().equals(StatusTarefa.CONCLUIDA))
+            throw APIException.build(HttpStatus.BAD_REQUEST, "Tarefa já está concluída");
+
+    }
+
+
 }
