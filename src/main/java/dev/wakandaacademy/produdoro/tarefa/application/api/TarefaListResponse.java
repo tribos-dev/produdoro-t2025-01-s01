@@ -41,7 +41,6 @@ public class TarefaListResponse {
 
     public static List<TarefaListResponse> converte(List<Tarefa> tarefas) {
         return tarefas.stream()
-                .sorted(Comparator.comparingInt(Tarefa::getPosicaoTarefa))
                 .map(TarefaListResponse::new)
                 .collect(Collectors.toList());
     }

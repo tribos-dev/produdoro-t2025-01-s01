@@ -11,7 +11,5 @@ public interface TarefaRepository {
     Tarefa salva(Tarefa tarefa);
     Optional<Tarefa> buscaTarefaPorId(UUID idTarefa);
     List<Tarefa> buscaTarefasDoUsuario(UUID idUsuario);
-    int contaNumeroDeTarefasDoUsuario(UUID idUsuario);
-    void ativaTarefa(UUID idUsuario);
 
 }

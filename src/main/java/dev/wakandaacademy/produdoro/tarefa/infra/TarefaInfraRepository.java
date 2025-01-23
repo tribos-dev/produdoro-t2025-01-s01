@@ -51,23 +51,5 @@ public class TarefaInfraRepository implements TarefaRepository {
         log.info("[finaliza] TarefaInfraRepository - buscaTarefasDoUsuario");
         return todasAsTarefas;
     }
-    @Override
-    public int contaNumeroDeTarefasDoUsuario(UUID idUsuario) {
-        log.info("[inicia] TarefaInfraRepository - contaNumeroDeTarefasDoUsuario");
-        int quantidadeDeTarefas = tarefaSpringMongoDBRepository.countTarefasByIdUsuario(idUsuario);
-        log.debug("[finaliza] TarefaInfraRepository - contaNumeroDeTarefasDoUsuario");
-        return quantidadeDeTarefas;
-    }
-
-    @Override
-    public void ativaTarefa(UUID idUsuario) {
-        log.info("[inicia] TarefaInfraRepository - desativarTarefa");
-        Query query = new Query(
-                Criteria.where("StatusAtivacao").is("ATIVA")
-                        .and("idUsuario").is(idUsuario));
-        Update update = new Update().set("StatusAtivacao", "INATIVA");
-        mongoTemplate.updateMulti(query, update, Tarefa.class);
-        log.info("[finaliza] TarefaInfraRepository - desativarTarefa");
-    }
 }
 
