@@ -107,6 +107,21 @@ public class TarefaApplicationService implements TarefaService {
 
     }
 
+    @Override
+    public void ativaTarefa(String email, UUID idTarefa) {
+        log.info("[inicia] TarefaApplicationService - ativaTarefa");
+        Tarefa tarefa = tarefaRepository.buscaTarefaPorId(idTarefa)
+                .orElseThrow(()-> APIException.build(HttpStatus.NOT_FOUND, "ID da tarefa inválido"));
+        Usuario usuario = usuarioRepository.buscaUsuarioPorEmail(email);
+        tarefa.pertenceAoUsuario(usuario);
+        tarefa.verificaTarefaAtiva();
+        tarefaRepository.desativaTarefa(usuario.getIdUsuario());
+        tarefa.ativaTarefa();
+        tarefaRepository.salva(tarefa);
+        log.info("[finaliza] TarefaApplicationService - ativaTarefa");
+    }
+
+
     private void handleAmountTaskVerification(Usuario usuario) {
         List<Tarefa> tarefas = tarefaRepository.listarTarefasPorIdusuario(usuario.getIdUsuario());
         if(tarefas.isEmpty())
@@ -115,6 +130,5 @@ public class TarefaApplicationService implements TarefaService {
        if(tarefas.size() < 2)
            throw APIException.build(HttpStatus.CONFLICT,
                    "Deve existir pelo menos duas tarefas cadastradas no registro");
-
    }
 }

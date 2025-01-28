@@ -43,5 +43,8 @@ public interface TarefaAPI {
     void limparTodasTarefas(@RequestHeader(name = "Authorization",required = true) String token,
                                           @PathVariable UUID idUsuario);
 
-
+    @PatchMapping("/ativaTarefa/{idTarefa}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void usuarioAtivaTarefa(@RequestHeader(name = "Authorization",required = true) String token,
+                            @PathVariable UUID idTarefa);
 }
