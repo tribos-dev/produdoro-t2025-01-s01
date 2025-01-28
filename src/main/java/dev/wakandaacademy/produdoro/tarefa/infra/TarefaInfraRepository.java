@@ -53,12 +53,6 @@ public class TarefaInfraRepository implements TarefaRepository {
         return tarefaList;
     }
 
-    public List<Tarefa> listarTarefasPorIdusuario(UUID idUsuario) {
-        log.info("[inicia] TarefaInfraRepository - listarTarefasPorIdusuario");
-        List<Tarefa> listaTarefa = tarefaSpringMongoDBRepository.findAllByIdUsuario(idUsuario);
-        log.info("[fim] TarefaInfraRepository - listarTarefasPorIdusuario");
-        return listaTarefa;
-    }
 
     @Override
     public void limparTodasAsTarefas(List<Tarefa> tarefas) {
@@ -69,10 +63,7 @@ public class TarefaInfraRepository implements TarefaRepository {
         log.info("[final] TarefaInfraRepository - limparTodasAsTarefas");
     }
 
-    @Override
-    public List<Tarefa> buscaTarefasPorUsuario(UUID idUsuario) {
-        return tarefaSpringMongoDBRepository.findAllByIdUsuario(idUsuario);
-    }
+
 
     @Override
     public void desativaTarefa(UUID idUsuario) {

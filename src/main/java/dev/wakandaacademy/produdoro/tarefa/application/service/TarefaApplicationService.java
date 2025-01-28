@@ -177,7 +177,7 @@ public class TarefaApplicationService implements TarefaService {
         handleLimparTodasTarefasVerification(usuarioPorId, usuarioPorEmail);
         handleAmountTaskVerification(usuarioPorEmail);
         tarefaRepository.limparTodasAsTarefas(
-                tarefaRepository.listarTarefasPorIdusuario(idUsuario));
+                tarefaRepository.buscaTodasTarefasPorIdUsuario(idUsuario));
         log.info("[fim] TarefaApplicationService - limparTodasTarefas");
     }
 
@@ -209,7 +209,7 @@ public class TarefaApplicationService implements TarefaService {
 
 
     private void handleAmountTaskVerification(Usuario usuario) {
-        List<Tarefa> tarefas = tarefaRepository.listarTarefasPorIdusuario(usuario.getIdUsuario());
+        List<Tarefa> tarefas = tarefaRepository.buscaTodasTarefasPorIdUsuario(usuario.getIdUsuario());
         if(tarefas.isEmpty())
             throw APIException.build(HttpStatus.CONFLICT, "Usuário não possui tarefa(as) cadastrada(as)");
 

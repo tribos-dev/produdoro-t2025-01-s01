@@ -14,6 +14,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import dev.wakandaacademy.produdoro.DataHelper;
+import dev.wakandaacademy.produdoro.handler.APIException;
+import dev.wakandaacademy.produdoro.tarefa.domain.StatusAtivacaoTarefa;
 import dev.wakandaacademy.produdoro.tarefa.domain.StatusTarefa;
 import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
@@ -87,14 +89,14 @@ class TarefaApplicationServiceTest {
         List<Tarefa> tarefas = DataHelper.createListTarefa();
         when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
         when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
-        when(tarefaRepository.listarTarefasPorIdusuario(any())).thenReturn(tarefas);
+        when(tarefaRepository.buscaTodasTarefasPorIdUsuario(any())).thenReturn(tarefas);
         tarefaApplicationService.limparTodasTarefas(usuario.getIdUsuario(), usuario.getEmail());
         verify(tarefaRepository, times(1)).limparTodasAsTarefas(tarefas);
     }
 
 
     @Test
-    public void testNaoMudaOrdemDeUmaTarefa() {
+    public void deveMudarOrdemDeUmaTarefa() {
         Usuario usuario = DataHelper.createUsuario();
         List<Tarefa> tarefas = DataHelper.createListTarefaToChangePosition();
         int posicao = 0;
@@ -115,15 +117,6 @@ class TarefaApplicationServiceTest {
                 tarefas.get(1).getIdTarefa(), posicao);
 
         assertEquals(posicao, tarefas.get(1).getPosicao());
-    }
-
-
-
-
-    @Test
-    public void deveMudarOrdemDeUmaTarefa() {
-        Usuario usuario = DataHelper.createUsuario();
-        List<Tarefa> tarefas = DataHelper.createListTarefa();
     }
 
     public TarefaRequest getTarefaRequest() {
