@@ -5,6 +5,7 @@ import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaIdResponse;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.domain.Tarefa;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -13,6 +14,9 @@ public interface TarefaService {
     Tarefa detalhaTarefa(String usuario, UUID idTarefa);
 	void editaTarefa(String emailUsuario, UUID idTarefa, @Valid EditaTarefaRequest editaTarefaRequest);
     void concluirTarefa(UUID idTarefa, String usuarioEmail);
+
+    void limparTodasTarefas(UUID idUsuario, String emailUsuario);
+    void ativaTarefa(String email, UUID idTarefa);
 
     void alteraPosicaoTarefa(String usuarioEmail, UUID idTarefa, int novaPosicao);
 }
