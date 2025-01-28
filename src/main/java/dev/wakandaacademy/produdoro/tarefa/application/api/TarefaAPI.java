@@ -37,6 +37,11 @@ public interface TarefaAPI {
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     void concluiTarefa(@RequestHeader(name = "Authorization", required = true) String token,
                                     @PathVariable UUID idTarefa);
+
+    @PatchMapping(value = "/muda-ordem-tarefa")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void alteraOrdemTarefa(@RequestHeader(name = "Authorization", required = true) String token,
+                       @RequestParam UUID idTarefa, @RequestParam int novaPosicao);
     
     @DeleteMapping("limpar-tarefas/{idUsuario}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)

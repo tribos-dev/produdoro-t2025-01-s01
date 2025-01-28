@@ -7,6 +7,7 @@ import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.repository.TarefaRepository;
 import dev.wakandaacademy.produdoro.tarefa.domain.StatusTarefa;
 import dev.wakandaacademy.produdoro.tarefa.domain.Tarefa;
+import dev.wakandaacademy.produdoro.tarefa.infra.TarefaInfraRepository;
 import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +15,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -30,7 +33,8 @@ public class TarefaApplicationService implements TarefaService {
     @Override
     public TarefaIdResponse criaNovaTarefa(TarefaRequest tarefaRequest) {
         log.info("[inicia] TarefaApplicationService - criaNovaTarefa");
-        Tarefa tarefaCriada = tarefaRepository.salva(new Tarefa(tarefaRequest));
+        int posicao = retornaProximaPosicaoDisponivel(tarefaRequest.getIdUsuario());
+        Tarefa tarefaCriada = tarefaRepository.salva(new Tarefa(tarefaRequest, posicao));
         log.info("[finaliza] TarefaApplicationService - criaNovaTarefa");
         return TarefaIdResponse.builder().idTarefa(tarefaCriada.getIdTarefa()).build();
     }
@@ -57,6 +61,30 @@ public class TarefaApplicationService implements TarefaService {
 	}
 
     @Override
+    public void alteraPosicaoTarefa(String usuarioEmail, UUID idTarefa, int novaPosicao) {
+        log.info("[inicia] TarefaApplicationService - alteraPosicaoTarefa");
+
+        Usuario usuario = usuarioRepository.buscaUsuarioPorEmail(usuarioEmail);
+        Tarefa tarefa = tarefaRepository.buscaTarefaPorId(idTarefa)
+                .orElseThrow(() -> APIException.build(HttpStatus.NOT_FOUND, "Tarefa não encontrada"));
+
+        verificaSeTarefaPertenceUsuario(usuario, tarefa);
+
+        List<Tarefa> tarefasOrdenadas = tarefaRepository.buscaTodasTarefasPorIdUsuario(usuario.getIdUsuario()).stream()
+                .sorted(Comparator.comparingInt(Tarefa::getPosicao))
+                .collect(Collectors.toList());
+
+        verificaRangeDePosicoes(tarefasOrdenadas, novaPosicao);
+
+        mudaPosicao(tarefa, novaPosicao, tarefasOrdenadas);
+        tarefasOrdenadas.forEach(tarefaRepository::salva);
+
+        log.info("[fim] TarefaApplicationService - alteraPosicaoTarefa");
+    }
+
+
+
+    @Override
     public void concluirTarefa(UUID idTarefa, String usuarioEmail) {
         log.info("[inicia] TarefaApplicationService - concluirTarefa");
 
@@ -64,22 +92,80 @@ public class TarefaApplicationService implements TarefaService {
         Tarefa tarefa = tarefaRepository.buscaTarefaPorId(idTarefa)
                 .orElseThrow(() -> APIException.build(HttpStatus.NOT_FOUND, "Tarefa não encontrada"));
 
-        handlerConcluirTarefaVerification(tarefa, usuario);
+        verificaTarefaJaConcluida(tarefa, usuario);
+        verificaSeTarefaPertenceUsuario(usuario, tarefa);
 
         tarefa.setStatus(StatusTarefa.CONCLUIDA);
         tarefaRepository.salva(tarefa);
         log.info("[finaliza] TarefaApplicationService - concluirTarefa");
 
-
     }
-    private void handlerConcluirTarefaVerification(Tarefa tarefa, Usuario usuario){
-        if(!tarefa.getIdUsuario().equals(usuario.getIdUsuario()))
-            throw APIException.build(HttpStatus.UNAUTHORIZED, "Tarefa não pertence a esse usuario");
 
+
+    private void verificaTarefaJaConcluida(Tarefa tarefa, Usuario usuario){
+        log.info("[inicia] TarefaApplicationService - verificaTarefaJaConcluida");
         if(tarefa.getStatus().equals(StatusTarefa.CONCLUIDA))
             throw APIException.build(HttpStatus.BAD_REQUEST, "Tarefa já está concluída");
+        log.info("[fim] TarefaApplicationService - verificaTarefa");
 
     }
+
+    private void verificaSeTarefaPertenceUsuario(Usuario usuario, Tarefa tarefa) {
+        log.info("[inicia] TarefaApplicationService - verificaSeTarefaPertenceUsuario");
+        if(!tarefa.getIdUsuario().equals(usuario.getIdUsuario()))
+            throw APIException.build(HttpStatus.UNAUTHORIZED, "Tarefa não pertence a esse usuario");
+        log.info("[finaliza] Tarefa pertence a esse usuario");
+    }
+
+    private int retornaProximaPosicaoDisponivel(UUID idUsuario) {
+        log.info("[inicia] TarefaApplicationService - retornaPosicaoDisponivel");
+        List<Tarefa> listaTarefa = tarefaRepository.buscaTodasTarefasPorIdUsuario(idUsuario);
+
+        Tarefa tarefaMaiorPosicao = listaTarefa.stream().max(Comparator.comparingInt(
+                Tarefa::getPosicao)).orElse(null);
+
+        log.info("[fim] TarefaApplicationService - retornaPosicaoTarefa");
+        return tarefaMaiorPosicao == null ? 0 : (tarefaMaiorPosicao.getPosicao() + 1);
+    }
+
+
+    private static void mudaPosicao(Tarefa tarefa, int novaPosicao, List<Tarefa> tList) {
+        log.info("[inicia] TarefaApplicationService - mudaPosicao");
+
+        int indexAtual = tList.indexOf(tarefa);
+        int posicaoAtual = tarefa.getPosicao();
+
+        tarefa.setPosicao(novaPosicao);
+
+        if (novaPosicao < posicaoAtual) {
+            for (Tarefa t : tList) {
+                if (t.getPosicao() >= novaPosicao && t.getPosicao() < posicaoAtual) {
+                    t.setPosicao(t.getPosicao() + 1);
+                }
+            }
+        } else if (novaPosicao > posicaoAtual) {
+            for (Tarefa t : tList) {
+                if (t.getPosicao() <= novaPosicao && t.getPosicao() > posicaoAtual) {
+                    t.setPosicao(t.getPosicao() - 1);
+                }
+            }
+        }
+        tList.get(indexAtual).setPosicao(novaPosicao);
+        tList.sort(Comparator.comparingInt(Tarefa::getPosicao));
+
+        log.info("[finaliza] TarefaApplicationService - mudaPosicao");
+    }
+
+    private void verificaRangeDePosicoes(List<Tarefa> tarefasOrdenadas, int novaPosicao) {
+        log.info("[inicia] TarefaApplicationService - verificaRangeDePosicoes");
+        Tarefa TarefaUltimaPosicao = tarefasOrdenadas.stream().max(Comparator.comparingInt(
+                Tarefa::getPosicao)).orElse(null);
+
+        if(TarefaUltimaPosicao != null && novaPosicao > TarefaUltimaPosicao.getPosicao())
+            throw APIException.build(HttpStatus.BAD_REQUEST, "Posicao fora do range de posicoes");
+        log.info("[fim] TarefaApplicationService - verificaRangeDePosicoes");
+    }
+
 
 
 
@@ -91,7 +177,7 @@ public class TarefaApplicationService implements TarefaService {
         handleLimparTodasTarefasVerification(usuarioPorId, usuarioPorEmail);
         handleAmountTaskVerification(usuarioPorEmail);
         tarefaRepository.limparTodasAsTarefas(
-                tarefaRepository.listarTarefasPorIdusuario(idUsuario));
+                tarefaRepository.buscaTodasTarefasPorIdUsuario(idUsuario));
         log.info("[fim] TarefaApplicationService - limparTodasTarefas");
     }
 
@@ -123,7 +209,7 @@ public class TarefaApplicationService implements TarefaService {
 
 
     private void handleAmountTaskVerification(Usuario usuario) {
-        List<Tarefa> tarefas = tarefaRepository.listarTarefasPorIdusuario(usuario.getIdUsuario());
+        List<Tarefa> tarefas = tarefaRepository.buscaTodasTarefasPorIdUsuario(usuario.getIdUsuario());
         if(tarefas.isEmpty())
             throw APIException.build(HttpStatus.CONFLICT, "Usuário não possui tarefa(as) cadastrada(as)");
 
