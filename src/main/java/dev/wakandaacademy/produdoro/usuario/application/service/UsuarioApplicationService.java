@@ -4,9 +4,13 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import dev.wakandaacademy.produdoro.credencial.application.service.CredencialService;
+import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.pomodoro.application.service.PomodoroService;
 import dev.wakandaacademy.produdoro.usuario.application.api.UsuarioCriadoResponse;
 import dev.wakandaacademy.produdoro.usuario.application.api.UsuarioNovoRequest;
@@ -62,6 +66,19 @@ public class UsuarioApplicationService implements UsuarioService {
 		usuarioRepository.salva(usuarioFoco);
 		log.info("[finaliza] UsuarioApplicationService - mudaStatusFoco");
 	}
+
+	@Override
+	public void statusPausaCurta(String email, UUID idUsuario) {
+		log.info("[inicia] UsuarioApplicationService -statusPausaCurta");
+		Usuario usuario = usuarioRepository.buscaUsuarioPorEmail(email);
+		usuarioRepository.buscaUsuarioPorId(idUsuario);
+		usuario.validaUsuario(idUsuario);
+		usuario.pausaCurta();
+		usuarioRepository.salva(usuario);
+		log.info("[finaliza] UsuarioApplicationService - statusPausaCurta");
+		
+	}
+
 
 }
 		

@@ -23,6 +23,7 @@ public class UsuarioController implements UsuarioAPI {
 	private final TokenService tokenService;
 	private final UsuarioService usuarioAppplicationService;
 	
+	
 
 
 	@Override
@@ -39,6 +40,15 @@ public class UsuarioController implements UsuarioAPI {
 		UsuarioCriadoResponse buscaUsuario = usuarioAppplicationService.buscaUsuarioPorId(idUsuario);
 		log.info("[finaliza] UsuarioController - buscaUsuarioPorId");
 		return buscaUsuario;
+	}
+	@Override
+	public void mudaStatusPausaCurta(String token, UUID idUsuario) {
+		log.info("[inicia] UsuarioController - mudaStatusPausaCurta");
+		log.info("[idUsuario] {}", idUsuario);
+		String usuario = tokenService.getUsuarioByBearerToken(token)
+				.orElseThrow(() -> APIException.build(HttpStatus.UNAUTHORIZED,"Token incorreto"));
+		usuarioAppplicationService.statusPausaCurta(usuario, idUsuario);
+		log.info("[finaliza] UsuarioController - mudaStatusPausaCurta");
 	}
 	
 	@Override

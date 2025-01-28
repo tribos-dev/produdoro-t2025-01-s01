@@ -45,6 +45,27 @@ public class Usuario {
 		this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
 	}
 
+	public void pausaCurta() {
+		verificaPausaCurta();
+		this.status = StatusUsuario.PAUSA_CURTA;
+		}
+
+	
+	
+	private void verificaPausaCurta() {
+		if(this.status.equals(StatusUsuario.PAUSA_CURTA)) {
+			throw APIException.build(HttpStatus.CONFLICT, "Usuario já está em pausa curta");
+		}
+		
+	}
+
+	public void validaUsuario(UUID idUsuario) {
+		if(!this.idUsuario.equals(idUsuario)) {
+			throw APIException
+			.build(HttpStatus.UNAUTHORIZED, "Credencial de autenticação não é válida");
+		}
+	}
+		
 	public void mudaStatusPausaLonga(UUID idUsuario) {
 		pertenceUsuario(idUsuario);
 		validaPausaLonga();
