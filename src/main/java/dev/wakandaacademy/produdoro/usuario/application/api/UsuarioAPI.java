@@ -32,7 +32,6 @@ public interface UsuarioAPI {
     		@PathVariable UUID idUsuario);
 
 	
-	
 	@PatchMapping(value = "/pausaLonga/{idUsuario}")
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	void mudaStatusPausaLonga(@RequestHeader(name = "Authorization", required =  true)String token, @PathVariable UUID idUsuario);
@@ -42,7 +41,4 @@ public interface UsuarioAPI {
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	void mudaStatusParaFoco(@RequestHeader(name = "Authorization", required = true) String token,
 						@PathVariable UUID idUsuario);
-
-
-
 }

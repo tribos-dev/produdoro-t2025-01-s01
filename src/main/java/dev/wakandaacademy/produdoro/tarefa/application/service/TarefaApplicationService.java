@@ -1,5 +1,15 @@
 package dev.wakandaacademy.produdoro.tarefa.application.service;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
 import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.api.EditaTarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaIdResponse;
@@ -8,21 +18,10 @@ import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.repository.TarefaRepository;
 import dev.wakandaacademy.produdoro.tarefa.domain.StatusTarefa;
 import dev.wakandaacademy.produdoro.tarefa.domain.Tarefa;
-import dev.wakandaacademy.produdoro.tarefa.infra.TarefaInfraRepository;
 import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.validation.Valid;
 
 @Service
 @Log4j2
@@ -230,4 +229,16 @@ public class TarefaApplicationService implements TarefaService {
         log.info("[finaliza] TarefaApplicationService - buscaTodasTarefas");
         return TarefaListResponse.converte(tarefas);
     }
+
+	@Override
+	public void incrementaPomodoro(String usuarioEmail, UUID idTarefa) {
+		log.info("[inicia] TarefaApplicationService - incrementaPomodoro");
+	    Tarefa tarefa = detalhaTarefa(usuarioEmail, idTarefa);
+	    Usuario usuario = usuarioRepository.buscaUsuarioPorEmail(usuarioEmail);
+	    tarefa.incrementaPomodoro(tarefa, usuario);
+	    usuarioRepository.salva(usuario);
+	    tarefaRepository.salva(tarefa);
+	    log.info("[finaliza] TarefaApplicationService - incrementaPomodoro");
+		
+	}
 }

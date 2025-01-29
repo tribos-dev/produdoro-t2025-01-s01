@@ -44,12 +44,17 @@ public class Usuario {
 		this.status = StatusUsuario.FOCO;
 		this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
 	}
-
+	
+	public void mudaStatusPausaCurta(UUID idUsuario) {
+		pertenceUsuario(idUsuario);
+		verificaPausaCurta();
+		pausaCurta();
+	}
+	
 	public void pausaCurta() {
 		verificaPausaCurta();
 		this.status = StatusUsuario.PAUSA_CURTA;
 		}
-
 
 
 	private void verificaPausaCurta() {
