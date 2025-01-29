@@ -61,12 +61,6 @@ public class Tarefa {
 		this.contagemPomodoro = 1;
 		this.posicao = posicao;
 	}
-
-	public void pertenceAoUsuario(Usuario usuarioPorEmail) {
-		if(!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
-			throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário não é dono da Tarefa solicitada!");
-		}
-	}
 	
 	public void incrementaPomodoro(Tarefa tarefa, Usuario usuario) {
 		pertenceAoUsuario(usuario);
@@ -97,6 +91,11 @@ public class Tarefa {
 
 	}
 
+    public void pertenceAoUsuario(Usuario usuarioPorEmail) {
+        if (!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
+            throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário não é dono da Tarefa solicitada!");
+        }
+    }
 	public void verificaTarefaAtiva() {
 		if (this.statusAtivacao.equals(StatusAtivacaoTarefa.ATIVA)) {
 			throw APIException.build(HttpStatus.CONFLICT, "Tarefa já está ativa!");

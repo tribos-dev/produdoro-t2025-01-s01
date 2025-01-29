@@ -90,7 +90,15 @@ public class TarefaRestController implements TarefaAPI {
 				.orElseThrow(() -> APIException.build(HttpStatus.UNAUTHORIZED, token));
 		log.info("[usuario] {}", usuario);
 		return usuario;
-	}
+    }
+
+    @Override
+    public void deletaTarefasConcluidas(String token, UUID idUsuario) {
+        log.info("[inicia] TarefaRestController - deletaTarefasConcluidas");
+        String usuario = getUsuarioByToken(token);
+        tarefaService.deletaTarefasConcluidas(usuario, idUsuario);
+        log.info("[finaliza] TarefaRestController - deletaTarefasConcluidas");
+    }
 
 	@Override
 	public void usuarioAtivaTarefa(String token, UUID idTarefa) {

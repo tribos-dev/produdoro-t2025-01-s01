@@ -1,5 +1,6 @@
 package dev.wakandaacademy.produdoro.tarefa.application.repository;
 
+import dev.wakandaacademy.produdoro.tarefa.domain.StatusTarefa;
 import dev.wakandaacademy.produdoro.tarefa.domain.Tarefa;
 
 import java.util.List;
@@ -10,7 +11,10 @@ public interface TarefaRepository {
 
     Tarefa salva(Tarefa tarefa);
     Optional<Tarefa> buscaTarefaPorId(UUID idTarefa);
+    List<Tarefa> listarTarefasPorIdusuario(UUID idUsuario);
     void limparTodasAsTarefas(List<Tarefa> tarefas);
+    List<Tarefa> buscaTarefasPorUsuario(UUID idUsuario);
+    boolean deletaConcluidas(UUID idUsuario, StatusTarefa statusTarefa);
     void desativaTarefa(UUID idUsuario);
     List<Tarefa> buscaTodasTarefasPorIdUsuario(UUID idUsuario);
     List<Tarefa> buscaTarefasDoUsuario(UUID idUsuario);

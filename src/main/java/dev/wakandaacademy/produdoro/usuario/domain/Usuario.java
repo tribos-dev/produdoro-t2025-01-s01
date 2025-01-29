@@ -1,24 +1,17 @@
 package dev.wakandaacademy.produdoro.usuario.domain;
 
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.validation.constraints.Email;
-
+import dev.wakandaacademy.produdoro.handler.APIException;
+import dev.wakandaacademy.produdoro.pomodoro.domain.ConfiguracaoPadrao;
+import dev.wakandaacademy.produdoro.usuario.application.api.UsuarioNovoRequest;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 
-import dev.wakandaacademy.produdoro.handler.APIException;
-import dev.wakandaacademy.produdoro.pomodoro.domain.ConfiguracaoPadrao;
-import dev.wakandaacademy.produdoro.usuario.application.api.UsuarioNovoRequest;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import javax.validation.constraints.Email;
+import java.util.Optional;
+import java.util.UUID;
 
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -64,13 +57,6 @@ public class Usuario {
 
 	}
 
-	public void validaUsuario(UUID idUsuario) {
-		if(!this.idUsuario.equals(idUsuario)) {
-			throw APIException
-			.build(HttpStatus.UNAUTHORIZED, "Credencial de autenticação não é válida");
-		}
-	}
-
 	public void mudaStatusPausaLonga(UUID idUsuario) {
 		pertenceUsuario(idUsuario);
 		validaPausaLonga();
@@ -87,12 +73,6 @@ public class Usuario {
 		}
 	}
 
-	public void validaPausaLonga() {
-		if (this.status.equals(StatusUsuario.PAUSA_LONGA)) {
-			throw APIException.build(HttpStatus.CONFLICT, "Usuário já está em Pausa Longa");
-		}
-	}
-
 	public void mudaStatusParaFoco(UUID idUsuario) {
 		validaUsurio(idUsuario);
 		verificaStatusFoco();
@@ -102,8 +82,6 @@ public class Usuario {
 		Optional.of(this.idUsuario)
 				.filter(id -> id.equals(idUsuario))
 				.orElseThrow(() -> APIException.build(HttpStatus.UNAUTHORIZED, "Usuário(a) não autorizado(a) para a requisição solicitada"));
-
-
 	}
 
 	private void verificaStatusFoco() {
@@ -116,4 +94,15 @@ public class Usuario {
 	private void mudaStatusParaFoco() {
 		this.status = StatusUsuario.FOCO;
 	}
+    public void validaPausaLonga() {
+        if (this.status.equals(StatusUsuario.PAUSA_LONGA)) {
+            throw APIException.build(HttpStatus.CONFLICT, "Usuário já está em Pausa Longa");
+        }
+    }
+
+    public void validaUsuario(UUID idUsuario) {
+        if (!this.idUsuario.equals(idUsuario)) {
+            throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário(a) não autorizado(a) para a requisição solicitada!");
+        }
+    }
 }
