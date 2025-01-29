@@ -2,6 +2,7 @@ package dev.wakandaacademy.produdoro.tarefa.application.service;
 
 import dev.wakandaacademy.produdoro.tarefa.application.api.EditaTarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaIdResponse;
+import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaListResponse;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.domain.Tarefa;
 
@@ -19,4 +20,5 @@ public interface TarefaService {
     void ativaTarefa(String email, UUID idTarefa);
 
     void alteraPosicaoTarefa(String usuarioEmail, UUID idTarefa, int novaPosicao);
+    List<TarefaListResponse> buscarTodasAsTarefas(String usuario, UUID idUsuario);
 }

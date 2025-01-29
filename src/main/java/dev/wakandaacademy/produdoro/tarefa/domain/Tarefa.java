@@ -16,6 +16,9 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 
+import dev.wakandaacademy.produdoro.handler.APIException;
+import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
+import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -70,7 +73,7 @@ public class Tarefa {
 
 	public void edita(@Valid EditaTarefaRequest editaTarefaRequest) {
 		this.descricao = editaTarefaRequest.getDescricao();
-		
+
 	}
 
 	public void verificaTarefaAtiva() {

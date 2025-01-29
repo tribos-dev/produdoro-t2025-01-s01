@@ -3,6 +3,7 @@ package dev.wakandaacademy.produdoro.tarefa.application.service;
 import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.api.EditaTarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaIdResponse;
+import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaListResponse;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.repository.TarefaRepository;
 import dev.wakandaacademy.produdoro.tarefa.domain.StatusTarefa;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,7 +40,7 @@ public class TarefaApplicationService implements TarefaService {
         log.info("[finaliza] TarefaApplicationService - criaNovaTarefa");
         return TarefaIdResponse.builder().idTarefa(tarefaCriada.getIdTarefa()).build();
     }
-    
+
     @Override
     public Tarefa detalhaTarefa(String usuario, UUID idTarefa) {
         log.info("[inicia] TarefaApplicationService - detalhaTarefa");
@@ -51,7 +53,7 @@ public class TarefaApplicationService implements TarefaService {
         return tarefa;
     }
 	@Override
-	public void editaTarefa(String emailUsuario, UUID idTarefa, 
+	public void editaTarefa(String emailUsuario, UUID idTarefa,
 			@Valid EditaTarefaRequest editaTarefaRequest) {
 		log.info("[inicia] TarefaApplicationService - editaTarefa");
 		Tarefa tarefa = detalhaTarefa(emailUsuario, idTarefa);
@@ -217,4 +219,15 @@ public class TarefaApplicationService implements TarefaService {
            throw APIException.build(HttpStatus.CONFLICT,
                    "Deve existir pelo menos duas tarefas cadastradas no registro");
    }
+
+    @Override
+    public List<TarefaListResponse> buscarTodasAsTarefas(String usuario, UUID idUsuario) {
+        log.info("[inicia] TarefaApplicationService - buscaTodasTarefas");
+        Usuario usuarioPorEmail = usuarioRepository.buscaUsuarioPorEmail(usuario);
+        usuarioRepository.buscaUsuarioPorId(idUsuario);
+        usuarioPorEmail.validaUsuario(idUsuario);
+        List<Tarefa> tarefas = tarefaRepository.buscaTarefasDoUsuario(idUsuario);
+        log.info("[finaliza] TarefaApplicationService - buscaTodasTarefas");
+        return TarefaListResponse.converte(tarefas);
+    }
 }

@@ -1,5 +1,6 @@
 package dev.wakandaacademy.produdoro.tarefa.application.api;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -32,7 +33,7 @@ public class TarefaRestController implements TarefaAPI {
 	public TarefaDetalhadoResponse detalhaTarefa(String token, UUID idTarefa) {
 		log.info("[inicia] TarefaRestController - detalhaTarefa");
 		String usuario = getUsuarioByToken(token);
-		Tarefa tarefa = tarefaService.detalhaTarefa(usuario,idTarefa);
+		Tarefa tarefa = tarefaService.detalhaTarefa(usuario, idTarefa);
 		log.info("[finaliza] TarefaRestController - detalhaTarefa");
 		return new TarefaDetalhadoResponse(tarefa);
 	}
@@ -71,7 +72,16 @@ public class TarefaRestController implements TarefaAPI {
 		String emailUsuario = getUsuarioByToken(token);
 		tarefaService.editaTarefa(emailUsuario, idTarefa, editaTarefaRequest);
 		log.info("[Finaliza] TarefaRestController - editaTarefa");
-		
+
+	}
+
+	@Override
+	public List<TarefaListResponse> listarTarefasUsuario(String token, UUID idUsuario) {
+		log.info("[inicia] TarefaRestController - listarTarefasUsuario");
+		String usuario = getUsuarioByToken(token);
+		List<TarefaListResponse> tarefas = tarefaService.buscarTodasAsTarefas(usuario, idUsuario);
+		log.info("[finaliza] TarefaRestController - listarTarefasUsuario");
+		return tarefas;
 	}
 
 	private String getUsuarioByToken(String token) {
