@@ -10,6 +10,9 @@ public interface TarefaRepository {
 
     Tarefa salva(Tarefa tarefa);
     Optional<Tarefa> buscaTarefaPorId(UUID idTarefa);
+    void limparTodasAsTarefas(List<Tarefa> tarefas);
+    void desativaTarefa(UUID idUsuario);
+    List<Tarefa> buscaTodasTarefasPorIdUsuario(UUID idUsuario);
     List<Tarefa> buscaTarefasDoUsuario(UUID idUsuario);
 
 }
