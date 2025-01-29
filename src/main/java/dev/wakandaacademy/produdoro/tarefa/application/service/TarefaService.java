@@ -21,4 +21,5 @@ public interface TarefaService {
 
     void alteraPosicaoTarefa(String usuarioEmail, UUID idTarefa, int novaPosicao);
     List<TarefaListResponse> buscarTodasAsTarefas(String usuario, UUID idUsuario);
+	void incrementaPomodoro(String usuarioEmail, UUID idTarefa);
 }
